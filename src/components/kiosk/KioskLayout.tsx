@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { toast } from 'sonner';
 import KioskHeader from './KioskHeader';
+import LandingPage from './LandingPage';
 import LoginScreen from './LoginScreen';
 import ServiceModules from './ServiceModules';
 import BillPaymentModule from './BillPaymentModule';
@@ -14,110 +15,168 @@ import AppointmentModule from './AppointmentModule';
 import RewardsModule from './RewardsModule';
 import VoiceCommander from './VoiceCommander';
 import ChatAssistant from './ChatAssistant';
+import ElectricityModule from './ElectricityModule';
+import GasModule from './GasModule';
+import MunicipalModule from './MunicipalModule';
+import CredentialManagement from './CredentialManagement';
+import MeterService from './MeterService';
+import CitizenDashboard from './CitizenDashboard';
+import NearbyKioskFinder from './NearbyKioskFinder';
+import SeniorCitizenMode from './SeniorCitizenMode';
+import EmergencySOS from './EmergencySOSModule';
+import OutageHeatmap from './OutageHeatmap';
+import FamilyBillManager from './FamilyBillManager';
+import BillDisputeAnalyzer from './BillDisputeAnalyzer';
+import CivicLeaderboard from './CivicLeaderboard';
+import VoiceAssistantModule from './VoiceAssistantModule';
 import { useAuth } from '@/context/AuthContext';
 
-type ModuleType = 'home' | 'bills' | 'complaint' | 'newService' | 'track' | 'documents' | 'alerts' | 'waste' | 'appointment' | 'rewards';
+type ModuleType =
+  | 'home' | 'bills' | 'complaint' | 'newService' | 'track' | 'documents'
+  | 'alerts' | 'waste' | 'appointment' | 'rewards' | 'meter' | 'credentials'
+  | 'dashboard' | 'nearbyKiosk' | 'outageMap' | 'familyBills'
+  | 'disputeAnalyzer' | 'leaderboard' | 'voiceAssistant';
 
 const KioskLayout: React.FC = () => {
-  const { isAuthenticated, sessionTimeout } = useAuth();
+  const { isAuthenticated, sessionTimeout, organization } = useAuth();
   const [currentModule, setCurrentModule] = useState<ModuleType>('home');
+  const [landingDone, setLandingDone] = useState(false);
+  const [showSOS, setShowSOS] = useState(false);
+  const [seniorMode, setSeniorMode] = useState(false);
   const warningShownRef = useRef(false);
   const prevAuthRef = useRef(isAuthenticated);
 
-  // Session timeout warning and logout notification
   useEffect(() => {
     if (!isAuthenticated) {
-      // Check if we just logged out
       if (prevAuthRef.current) {
-        toast.info('Session Ended', {
-          description: 'You have been logged out due to inactivity.',
-        });
+        toast.info('Session Ended', { description: 'You have been logged out due to inactivity.' });
+        setLandingDone(false);
       }
       prevAuthRef.current = false;
       warningShownRef.current = false;
       return;
     }
-
     prevAuthRef.current = true;
-
-    // Warning at 30 seconds
     if (sessionTimeout < 30000 && !warningShownRef.current) {
-      toast.warning('Session expiring soon', {
-        description: 'You will be logged out in 30 seconds due to inactivity.',
-        duration: 5000,
-      });
+      toast.warning('Session expiring soon', { description: 'You will be logged out in 30 seconds.', duration: 5000 });
       warningShownRef.current = true;
     }
-    
-    // Reset warning flag if user becomes active
-    if (sessionTimeout > 30000) {
-      warningShownRef.current = false;
-    }
+    if (sessionTimeout > 30000) warningShownRef.current = false;
   }, [sessionTimeout, isAuthenticated]);
 
-  const handleModuleSelect = (module: string) => {
-    setCurrentModule(module as ModuleType);
-  };
+  useEffect(() => {
+    if (organization) (window as any).__suvidhaOrg = organization;
+  }, [organization]);
 
-  const handleBack = () => {
-    setCurrentModule('home');
-  };
+  const handleModuleSelect = (module: string) => setCurrentModule(module as ModuleType);
+  const handleBack = () => setCurrentModule('home');
 
   const renderModule = () => {
-    if (!isAuthenticated) {
-      return <LoginScreen onSuccess={() => setCurrentModule('home')} />;
+    if (!landingDone || !organization) return <LandingPage onComplete={() => setLandingDone(true)} />;
+    if (!isAuthenticated) return <LoginScreen onSuccess={() => setCurrentModule('home')} />;
+
+    // Cross-org new feature modules (accessible from any org)
+    switch (currentModule) {
+      case 'dashboard': return <CitizenDashboard onBack={handleBack} />;
+      case 'nearbyKiosk': return <NearbyKioskFinder onBack={handleBack} />;
+      case 'outageMap': return <OutageHeatmap onBack={handleBack} />;
+      case 'familyBills': return <FamilyBillManager onBack={handleBack} />;
+      case 'disputeAnalyzer': return <BillDisputeAnalyzer onBack={handleBack} />;
+      case 'leaderboard': return <CivicLeaderboard onBack={handleBack} />;
+      case 'voiceAssistant': return <VoiceAssistantModule onBack={handleBack} onNavigate={handleModuleSelect} />;
     }
 
-    switch (currentModule) {
-      case 'bills':
-        return <BillPaymentModule onBack={handleBack} />;
-      case 'complaint':
-        return <ComplaintModule onBack={handleBack} />;
-      case 'newService':
-        return <NewServiceModule onBack={handleBack} />;
-      case 'track':
-        return <TrackStatusModule onBack={handleBack} />;
-      case 'documents':
-        return <DocumentsModule onBack={handleBack} />;
-      case 'alerts':
-        return <AlertsModule onBack={handleBack} />;
-      case 'waste':
-        return <WasteModule onBack={handleBack} />;
-      case 'appointment':
-        return <AppointmentModule onBack={handleBack} />;
-      case 'rewards':
-        return <RewardsModule onBack={handleBack} />;
-      default:
-        return <ServiceModules onModuleSelect={handleModuleSelect} />;
+    if (organization === 'electricity') {
+      switch (currentModule) {
+        case 'bills': return <BillPaymentModule onBack={handleBack} />;
+        case 'complaint': return <ComplaintModule onBack={handleBack} />;
+        case 'newService': return <NewServiceModule onBack={handleBack} />;
+        case 'track': return <TrackStatusModule onBack={handleBack} />;
+        case 'documents': return <DocumentsModule onBack={handleBack} />;
+        case 'alerts': return <AlertsModule onBack={handleBack} />;
+        case 'appointment': return <AppointmentModule onBack={handleBack} />;
+        case 'rewards': return <RewardsModule onBack={handleBack} />;
+        case 'meter': return <MeterService onBack={handleBack} />;
+        case 'credentials': return <CredentialManagement onBack={handleBack} />;
+        default: return <ElectricityModule onModuleSelect={handleModuleSelect} onChangeOrg={() => setLandingDone(false)} />;
+      }
     }
+
+    if (organization === 'gas') {
+      switch (currentModule) {
+        case 'bills': return <BillPaymentModule onBack={handleBack} />;
+        case 'complaint': return <ComplaintModule onBack={handleBack} />;
+        case 'newService': return <NewServiceModule onBack={handleBack} />;
+        case 'track': return <TrackStatusModule onBack={handleBack} />;
+        case 'documents': return <DocumentsModule onBack={handleBack} />;
+        case 'meter': return <MeterService onBack={handleBack} />;
+        case 'credentials': return <CredentialManagement onBack={handleBack} />;
+        default: return <GasModule onModuleSelect={handleModuleSelect} onChangeOrg={() => setLandingDone(false)} />;
+      }
+    }
+
+    if (organization === 'municipal') {
+      switch (currentModule) {
+        case 'bills': return <BillPaymentModule onBack={handleBack} />;
+        case 'complaint': return <ComplaintModule onBack={handleBack} />;
+        case 'newService': return <NewServiceModule onBack={handleBack} />;
+        case 'track': return <TrackStatusModule onBack={handleBack} />;
+        case 'documents': return <DocumentsModule onBack={handleBack} />;
+        case 'waste': return <WasteModule onBack={handleBack} />;
+        case 'credentials': return <CredentialManagement onBack={handleBack} />;
+        default: return <MunicipalModule onModuleSelect={handleModuleSelect} onChangeOrg={() => setLandingDone(false)} />;
+      }
+    }
+
+    return <ServiceModules onModuleSelect={handleModuleSelect} />;
   };
 
+  if (seniorMode && landingDone && isAuthenticated) {
+    return (
+      <div className="min-h-screen flex flex-col bg-background">
+        <SeniorCitizenMode
+          onModuleSelect={(m) => { setSeniorMode(false); handleModuleSelect(m); }}
+          onExit={() => setSeniorMode(false)}
+        />
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen flex flex-col bg-background">
-      <KioskHeader />
-      <VoiceCommander onNavigate={handleModuleSelect} />
-      <ChatAssistant onNavigate={handleModuleSelect} />
-      <main className="flex-1 overflow-auto">
+    <div className="min-h-screen flex flex-col bg-background kiosk-portrait kiosk-touch kiosk-no-select">
+      {landingDone && organization && (
+        <KioskHeader
+          onSOS={() => setShowSOS(true)}
+          onSeniorMode={() => setSeniorMode(true)}
+          onDashboard={() => handleModuleSelect('dashboard')}
+          onNearbyKiosk={() => handleModuleSelect('nearbyKiosk')}
+        />
+      )}
+      {landingDone && organization && <VoiceCommander onNavigate={handleModuleSelect} />}
+      {landingDone && organization && <ChatAssistant onNavigate={handleModuleSelect} />}
+      {showSOS && <EmergencySOS onClose={() => setShowSOS(false)} />}
+      <main className="flex-1 kiosk-scroll">
         {renderModule()}
       </main>
-      {/* Footer */}
-      <footer className="bg-slate-900 text-slate-300 py-4 px-6 text-center text-xs border-t border-slate-800">
-        <div className="flex flex-col md:flex-row items-center justify-between max-w-7xl mx-auto gap-4">
-          <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-            <span className="font-mono">SYSTEM ONLINE • v1.0.0</span>
+      {landingDone && organization && (
+        <footer className="bg-slate-900 text-slate-300 py-4 px-6 text-center text-xs border-t border-slate-800">
+          <div className="flex flex-col md:flex-row items-center justify-between max-w-7xl mx-auto gap-4">
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+              <span className="font-mono">SYSTEM ONLINE • v1.0.0</span>
+            </div>
+            <div className="flex items-center gap-6 opacity-80">
+              <span>© 2026 SUVIDHA - Govt of India</span>
+              <span className="hidden md:inline">•</span>
+              <span>Powered by Smart City Mission</span>
+            </div>
+            <div className="flex items-center gap-4 text-[10px] uppercase tracking-wider opacity-60">
+              <span>SECURE CONNECTION</span>
+              <span>DPDP COMPLIANT</span>
+            </div>
           </div>
-          <div className="flex items-center gap-6 opacity-80">
-            <span>© 2026 SUVIDHA - Govt of India</span>
-            <span className="hidden md:inline">•</span>
-            <span>Powered by Smart City Mission</span>
-          </div>
-          <div className="flex items-center gap-4 text-[10px] uppercase tracking-wider opacity-60">
-             <span>SECURE CONNECTION</span>
-             <span>DPDP COMPLIANT</span>
-          </div>
-        </div>
-      </footer>
+        </footer>
+      )}
     </div>
   );
 };

@@ -3,6 +3,10 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useKiosk } from '@/context/KioskContext';
 import { 
+  Users,
+  Scale,
+  Trophy,
+  Mic,
   CreditCard, 
   MessageSquareWarning, 
   FilePlus, 
@@ -15,7 +19,10 @@ import {
   Trash2,
   Volume2,
   Calendar,
-  Trophy
+  Trophy,
+  LayoutDashboard,
+  MapPin,
+  UserCheck
 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -87,11 +94,60 @@ const ServiceModules: React.FC<ServiceModulesProps> = ({ onModuleSelect }) => {
       color: 'secondary'
     },
     {
+      id: 'dashboard',
+      icon: LayoutDashboard,
+      title: i18n.language === 'en' ? 'My Dashboard' : 'मेरा डैशबोर्ड',
+      description: i18n.language === 'en' ? 'Usage insights, carbon footprint & bill predictions' : 'उपयोग जानकारी, कार्बन फुटप्रिंट और बिल अनुमान',
+      color: 'accent'
+    },
+    {
+      id: 'nearbyKiosk',
+      icon: MapPin,
+      title: i18n.language === 'en' ? 'Nearby Kiosks' : 'नजदीकी कियोस्क',
+      description: i18n.language === 'en' ? 'Find nearest SUVIDHA kiosk with directions' : 'दिशा-निर्देश के साथ निकटतम कियोस्क खोजें',
+      color: 'primary'
+    },
+    {
       id: 'waste',
       icon: Trash2,
       title: t('services.waste.title'),
       description: t('services.waste.description'),
       color: 'primary'
+    },
+    {
+      id: 'outageMap',
+      icon: MapPin,
+      title: i18n.language === 'en' ? 'Live Outage Map' : 'लाइव आउटेज मैप',
+      description: i18n.language === 'en' ? 'Real-time crowd-sourced utility disruptions' : 'रियल-टाइम उपयोगिता व्यवधान',
+      color: 'secondary'
+    },
+    {
+      id: 'familyBills',
+      icon: Users,
+      title: i18n.language === 'en' ? 'Family Bill Manager' : 'पारिवारिक बिल प्रबंधक',
+      description: i18n.language === 'en' ? 'Pay bills for all family members at once' : 'एक बार में सभी के बिल भरें',
+      color: 'accent'
+    },
+    {
+      id: 'disputeAnalyzer',
+      icon: Scale,
+      title: i18n.language === 'en' ? 'Bill Dispute Analyzer' : 'बिल विवाद विश्लेषक',
+      description: i18n.language === 'en' ? 'AI-powered bill anomaly detection & dispute filing' : 'एआई बिल विसंगति विश्लेषण',
+      color: 'primary'
+    },
+    {
+      id: 'leaderboard',
+      icon: Trophy,
+      title: i18n.language === 'en' ? 'Civic Leaderboard' : 'नागरिक लीडरबोर्ड',
+      description: i18n.language === 'en' ? 'Earn points & rank among civic champions' : 'अंक अर्जित करें और शीर्ष नागरिक बनें',
+      color: 'secondary'
+    },
+    {
+      id: 'voiceAssistant',
+      icon: Mic,
+      title: i18n.language === 'en' ? 'Voice Assistant' : 'वॉयस असिस्टेंट',
+      description: i18n.language === 'en' ? 'Navigate by voice in Hindi & English' : 'हिंदी और अंग्रेजी में आवाज से नेविगेट करें',
+      color: 'accent'
     }
   ];
 

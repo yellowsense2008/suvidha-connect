@@ -3,19 +3,27 @@ import React, { useEffect, useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { useKiosk } from '@/context/KioskContext';
 import { useTranslation } from 'react-i18next';
-import { Shield, Globe, LogOut, Clock, User, Eye, Volume2, VolumeX, Bell, AlertTriangle, CloudRain, Wrench, Info } from 'lucide-react';
+import { Shield, Globe, LogOut, Clock, User, Eye, Volume2, VolumeX, Bell, AlertTriangle, CloudRain, Wrench, Info, Siren, UserCheck, LayoutDashboard, MapPin, Server } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { toast } from 'sonner';
 import { civicAlerts } from '@/lib/mockData';
 
-const KioskHeader: React.FC = () => {
+interface KioskHeaderProps {
+  onSOS?: () => void;
+  onSeniorMode?: () => void;
+  onDashboard?: () => void;
+  onNearbyKiosk?: () => void;
+}
+
+const KioskHeader: React.FC<KioskHeaderProps> = ({ onSOS, onSeniorMode, onDashboard, onNearbyKiosk }) => {
   const { isAuthenticated, citizen, language, setLanguage, logout, sessionTimeout } = useAuth();
-  const { ttsEnabled, toggleTTS } = useKiosk();
+  const { ttsEnabled, toggleTTS, backendOnline } = useKiosk();
   const { t, i18n } = useTranslation();
   const [highContrast, setHighContrast] = useState(false);
   const [largeText, setLargeText] = useState(false);
+  const [blindMode, setBlindMode] = useState(false);
   
   const activeAlerts = civicAlerts.filter(alert => new Date(alert.expiresAt) > new Date());
   const unreadCount = activeAlerts.length;
@@ -55,10 +63,22 @@ const KioskHeader: React.FC = () => {
   useEffect(() => {
     if (largeText) {
       document.documentElement.style.fontSize = '125%';
-    } else {
+    } else if (!blindMode) {
       document.documentElement.style.fontSize = '100%';
     }
-  }, [largeText]);
+  }, [largeText, blindMode]);
+
+  // Blind / elderly mode — max font + high contrast
+  useEffect(() => {
+    if (blindMode) {
+      document.body.classList.add('blind-mode', 'high-contrast');
+      document.documentElement.style.fontSize = '150%';
+    } else {
+      document.body.classList.remove('blind-mode');
+      if (!highContrast) document.body.classList.remove('high-contrast');
+      document.documentElement.style.fontSize = largeText ? '125%' : '100%';
+    }
+  }, [blindMode, highContrast, largeText]);
 
   const formatTime = (ms: number) => {
     const minutes = Math.floor(ms / 60000);
@@ -130,10 +150,61 @@ const KioskHeader: React.FC = () => {
           <div className="text-[10px] uppercase tracking-widest opacity-60 bg-white/10 text-blue-50 px-2 py-0.5 rounded-full inline-block mt-1 border border-white/10">
             Kiosk ID: KIOSK-SEC5-001
           </div>
+          <div className={`text-[10px] uppercase tracking-widest px-2 py-0.5 rounded-full inline-block mt-1 border flex items-center gap-1 ${
+            backendOnline ? 'bg-green-500/20 text-green-200 border-green-400/30' : 'bg-yellow-500/20 text-yellow-200 border-yellow-400/30'
+          }`}>
+            <Server className="w-2.5 h-2.5" />
+            {backendOnline ? 'API Online' : 'Offline Mode'}
+          </div>
         </div>
 
         {/* Right: Language, User, Logout */}
         <div className="flex items-center gap-4">
+          {/* Quick Action Buttons */}
+          {isAuthenticated && (
+            <div className="flex items-center gap-2">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={onDashboard}
+                className="text-white hover:bg-white/10 gap-1.5 border border-white/20 h-9"
+                title="My Dashboard"
+              >
+                <LayoutDashboard className="w-4 h-4" />
+                <span className="hidden lg:inline text-xs">Dashboard</span>
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={onNearbyKiosk}
+                className="text-white hover:bg-white/10 gap-1.5 border border-white/20 h-9"
+                title="Nearby Kiosks"
+              >
+                <MapPin className="w-4 h-4" />
+                <span className="hidden lg:inline text-xs">Nearby</span>
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={onSeniorMode}
+                className="text-white hover:bg-white/10 gap-1.5 border border-white/20 h-9"
+                title="Senior Citizen Mode"
+              >
+                <UserCheck className="w-4 h-4" />
+                <span className="hidden lg:inline text-xs">Senior</span>
+              </Button>
+              <Button
+                size="sm"
+                onClick={onSOS}
+                className="bg-red-600 hover:bg-red-700 text-white gap-1.5 border border-red-400 h-9 animate-pulse hover:animate-none"
+                title="Emergency SOS"
+              >
+                <Siren className="w-4 h-4" />
+                <span className="text-xs font-bold">SOS</span>
+              </Button>
+            </div>
+          )}
+
           {/* Accessibility Controls */}
           <div className="flex items-center gap-2 bg-white/10 rounded-lg p-1 border border-white/20">
             <Button
@@ -141,7 +212,7 @@ const KioskHeader: React.FC = () => {
               size="icon"
               onClick={() => setHighContrast(!highContrast)}
               className={`h-8 w-8 text-blue-100 hover:bg-white/20 hover:text-white ${highContrast ? 'bg-white text-blue-900 shadow-sm' : ''}`}
-              title={t('header.highContrast') || "High Contrast"}
+              title="High Contrast"
             >
               <Eye className="w-4 h-4" />
             </Button>
@@ -150,9 +221,18 @@ const KioskHeader: React.FC = () => {
               size="icon"
               onClick={() => setLargeText(!largeText)}
               className={`h-8 w-8 text-blue-100 hover:bg-white/20 hover:text-white ${largeText ? 'bg-white text-blue-900 shadow-sm' : ''}`}
-              title={t('header.largeText') || "Large Text"}
+              title="Large Text"
             >
               <span className="text-xs font-bold">A+</span>
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setBlindMode(!blindMode)}
+              className={`h-8 w-8 text-blue-100 hover:bg-white/20 hover:text-white ${blindMode ? 'bg-yellow-400 text-black shadow-sm' : ''}`}
+              title="Blind / Elderly Mode"
+            >
+              <span className="text-xs font-bold">👁</span>
             </Button>
           </div>
 
@@ -264,11 +344,15 @@ const KioskHeader: React.FC = () => {
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => setLanguage(language === 'en' ? 'hi' : 'en')}
+            onClick={() => {
+              const langs: ('en' | 'hi' | 'as')[] = ['en', 'hi', 'as'];
+              const next = langs[(langs.indexOf(language as 'en' | 'hi' | 'as') + 1) % 3];
+              setLanguage(next);
+            }}
             className="text-white hover:bg-white/10 gap-2 border border-white/20"
           >
             <Globe className="w-4 h-4" />
-            {language === 'en' ? 'हिंदी' : 'English'}
+            {language === 'en' ? 'हिंदी' : language === 'hi' ? 'অসমীয়া' : 'English'}
           </Button>
 
           {isAuthenticated && citizen && (
