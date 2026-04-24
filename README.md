@@ -89,7 +89,7 @@ https://suvidha-connect.vercel.app
 
 ## 🏢 Developed By
 
-**YellowSense Technologies Pvt Ltd**  
+****  
 Hackathon Prototype – 2026
 
 ---
@@ -212,7 +212,7 @@ suvidha-connect/
 
 ## 📄 License
 
-This is a hackathon prototype. All rights reserved by YellowSense Technologies Pvt Ltd.
+This is a hackathon prototype. All rights reserved by .
 
 ---
 
@@ -225,7 +225,7 @@ This is a hackathon submission. For inquiries, please contact the development te
 ## 📞 Support
 
 For issues or questions:
-- Email: support@yellowsense.in
+- Email: support@suvidha-connect.gov.in
 - GitHub Issues: [Create an issue]
 
 ---
