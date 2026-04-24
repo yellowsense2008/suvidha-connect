@@ -7,11 +7,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
   Zap, Flame, Droplets, ArrowLeft, CreditCard, 
   Smartphone, Building, CheckCircle, Loader2, Download,
-  Calendar, Receipt, History
+  Calendar, Receipt, History, Printer
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { QRCodeSVG } from 'qrcode.react';
 import jsPDF from 'jspdf';
+import ThermalReceipt, { type ThermalReceiptData } from './ThermalReceipt';
 
 interface BillPaymentModuleProps {
   onBack: () => void;
@@ -28,6 +29,7 @@ const BillPaymentModule: React.FC<BillPaymentModuleProps> = ({ onBack }) => {
     amount: number;
     timestamp: string;
   } | null>(null);
+  const [showThermal, setShowThermal] = useState(false);
 
   const t = {
     en: {
@@ -359,7 +361,7 @@ const BillPaymentModule: React.FC<BillPaymentModuleProps> = ({ onBack }) => {
               </div>
             </div>
 
-            <div className="flex gap-4 mb-6">
+            <div className="flex gap-3 mb-6 flex-wrap">
               <Button className={`flex-1 h-14 border hover:bg-opacity-10 hover:text-opacity-90 ${styles.border} ${styles.text} ${styles.hoverBg}`} variant="outline" onClick={handleDownloadReceipt}>
                 <Download className="w-5 h-5 mr-2" />
                 {text.downloadReceipt}
@@ -368,7 +370,31 @@ const BillPaymentModule: React.FC<BillPaymentModuleProps> = ({ onBack }) => {
                 <Receipt className="w-5 h-5 mr-2" />
                 {text.printReceipt}
               </Button>
+              <Button className={`flex-1 h-14 border ${styles.border} ${styles.text} ${styles.hoverBg}`} variant="outline" onClick={() => setShowThermal(true)}>
+                <Printer className="w-5 h-5 mr-2" />Thermal Receipt
+              </Button>
             </div>
+            {showThermal && paymentComplete && selectedBillData && (
+              <ThermalReceipt
+                language={language as 'en' | 'hi' | 'as'}
+                onClose={() => setShowThermal(false)}
+                data={{
+                  type: 'payment',
+                  title: `${getTypeLabel(selectedBillData.type)} Bill Receipt`,
+                  refId: paymentComplete.transactionId,
+                  timestamp: new Date(paymentComplete.timestamp).toLocaleString('en-IN'),
+                  rows: [
+                    { label: 'Consumer ID', value: selectedBillData.consumerId },
+                    { label: 'Service', value: getTypeLabel(selectedBillData.type) },
+                    { label: 'Bill Date', value: new Date(selectedBillData.billDate).toLocaleDateString() },
+                    { label: 'Amount Paid', value: `INR ${paymentComplete.amount.toLocaleString('en-IN')}`, bold: true },
+                    { label: 'Payment Mode', value: 'Digital' },
+                    { label: 'Status', value: 'PAID', bold: true },
+                  ],
+                  footer: 'Keep this receipt for your records',
+                }}
+              />
+            )}
 
             <div className="flex gap-4">
               <Button className="flex-1 h-14 bg-white text-slate-700 border border-slate-300 hover:bg-slate-50" variant="secondary" onClick={resetPayment}>
