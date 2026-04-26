@@ -254,3 +254,113 @@ All colors MUST be HSL.
     margin: 2cm;
   }
 }
+
+/* ============================================
+   KIOSK PORTRAIT LAYOUT — 55" 4K Touch Display
+   Target: 2160px wide × 3840px tall (portrait)
+   Scaled to browser viewport via CSS zoom
+   ============================================ */
+
+/* Kiosk mode: large touch targets everywhere */
+@media (min-width: 1200px) {
+  /* Minimum touch target size: 60px (WCAG 2.5.5) */
+  .kiosk-touch button,
+  .kiosk-touch [role="button"] {
+    min-height: 60px;
+    min-width: 60px;
+  }
+
+  /* Larger base font for kiosk readability at distance */
+  .kiosk-touch {
+    font-size: 18px;
+  }
+}
+
+/* Portrait kiosk container — fills the vertical display */
+.kiosk-portrait {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+}
+
+/* Service card grid optimized for portrait touch */
+.kiosk-service-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+}
+
+@media (min-width: 900px) {
+  .kiosk-service-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Large tap zone for kiosk cards */
+.kiosk-card {
+  min-height: 200px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  user-select: none;
+}
+
+/* Prevent text selection on touch */
+.kiosk-no-select {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+/* Smooth scroll for kiosk (no momentum scroll issues) */
+.kiosk-scroll {
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+
+/* Idle screen pulse animation */
+@keyframes idle-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.7; transform: scale(0.98); }
+}
+
+.kiosk-idle-pulse {
+  animation: idle-pulse 3s ease-in-out infinite;
+}
+
+/* Accessibility: focus ring for touch kiosk */
+.kiosk-touch *:focus-visible {
+  outline: 4px solid hsl(var(--primary));
+  outline-offset: 3px;
+  border-radius: 8px;
+}
+
+/* Blind mode: extra large text and high contrast */
+.blind-mode {
+  font-size: 150% !important;
+}
+
+.blind-mode button,
+.blind-mode [role="button"] {
+  min-height: 80px !important;
+  font-size: 1.4rem !important;
+  font-weight: 700 !important;
+}
+
+.blind-mode input,
+.blind-mode textarea {
+  font-size: 1.4rem !important;
+  min-height: 70px !important;
+}
+
+/* Thermal receipt print isolation */
+@media print {
+  .thermal-receipt-only * {
+    display: block !important;
+  }
+  body > *:not(.thermal-receipt-only) {
+    display: none !important;
+  }
+}
