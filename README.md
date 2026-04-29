@@ -103,7 +103,7 @@ Hackathon Prototype – 2026
 
 ```bash
 # Clone the repository
-git clone <your-repo-url>
+git clone https://github.com/yellowsense2008/suvidha-connect.git
 cd suvidha-connect
 
 # Install dependencies
