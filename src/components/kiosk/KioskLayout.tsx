@@ -167,7 +167,7 @@ const KioskLayout: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-background kiosk-portrait kiosk-touch kiosk-no-select">
+    <div className={`min-h-screen flex flex-col kiosk-portrait kiosk-touch kiosk-no-select ${!landingDone || !organization ? 'bg-[hsl(220,90%,18%)]' : 'bg-background'}`}>
       {landingDone && organization && (
         <KioskHeader
           onSOS={() => setShowSOS(true)}

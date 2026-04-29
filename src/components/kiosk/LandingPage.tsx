@@ -111,7 +111,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onComplete }) => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-b from-[hsl(220,90%,18%)] to-[hsl(220,90%,28%)] relative overflow-y-auto">
+    <div className="min-h-full flex flex-col bg-gradient-to-b from-[hsl(220,90%,18%)] to-[hsl(220,90%,28%)] relative overflow-y-auto">
       {/* Tricolor top bar */}
       <div className="h-2 w-full bg-[linear-gradient(90deg,#FF9933_0%,#FFFFFF_50%,#138808_100%)] shrink-0" />
 
