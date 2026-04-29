@@ -29,13 +29,21 @@ import FamilyBillManager from './FamilyBillManager';
 import BillDisputeAnalyzer from './BillDisputeAnalyzer';
 import CivicLeaderboard from './CivicLeaderboard';
 import VoiceAssistantModule from './VoiceAssistantModule';
+import PredictiveMaintenance from './PredictiveMaintenance';
+import WaterQualityReporter from './WaterQualityReporter';
+import EscalationTimer from './EscalationTimer';
+import CivicHealthScore from './CivicHealthScore';
+import BlindMode from './BlindMode';
+import LiveKioskTicker from './LiveKioskTicker';
 import { useAuth } from '@/context/AuthContext';
 
 type ModuleType =
   | 'home' | 'bills' | 'complaint' | 'newService' | 'track' | 'documents'
   | 'alerts' | 'waste' | 'appointment' | 'rewards' | 'meter' | 'credentials'
   | 'dashboard' | 'nearbyKiosk' | 'outageMap' | 'familyBills'
-  | 'disputeAnalyzer' | 'leaderboard' | 'voiceAssistant';
+  | 'disputeAnalyzer' | 'leaderboard' | 'voiceAssistant'
+  | 'predictiveMaintenance' | 'waterQuality' | 'escalationTimer'
+  | 'civicHealth' | 'blindMode';
 
 const KioskLayout: React.FC = () => {
   const { isAuthenticated, sessionTimeout, organization } = useAuth();
@@ -43,6 +51,7 @@ const KioskLayout: React.FC = () => {
   const [landingDone, setLandingDone] = useState(false);
   const [showSOS, setShowSOS] = useState(false);
   const [seniorMode, setSeniorMode] = useState(false);
+  const [blindMode, setBlindMode] = useState(false);
   const warningShownRef = useRef(false);
   const prevAuthRef = useRef(isAuthenticated);
 
@@ -75,7 +84,7 @@ const KioskLayout: React.FC = () => {
     if (!landingDone || !organization) return <LandingPage onComplete={() => setLandingDone(true)} />;
     if (!isAuthenticated) return <LoginScreen onSuccess={() => setCurrentModule('home')} />;
 
-    // Cross-org new feature modules (accessible from any org)
+    // All innovation modules — accessible from any org
     switch (currentModule) {
       case 'dashboard': return <CitizenDashboard onBack={handleBack} />;
       case 'nearbyKiosk': return <NearbyKioskFinder onBack={handleBack} />;
@@ -84,6 +93,10 @@ const KioskLayout: React.FC = () => {
       case 'disputeAnalyzer': return <BillDisputeAnalyzer onBack={handleBack} />;
       case 'leaderboard': return <CivicLeaderboard onBack={handleBack} />;
       case 'voiceAssistant': return <VoiceAssistantModule onBack={handleBack} onNavigate={handleModuleSelect} />;
+      case 'predictiveMaintenance': return <PredictiveMaintenance onBack={handleBack} />;
+      case 'waterQuality': return <WaterQualityReporter onBack={handleBack} />;
+      case 'escalationTimer': return <EscalationTimer onBack={handleBack} />;
+      case 'civicHealth': return <CivicHealthScore onBack={handleBack} />;
     }
 
     if (organization === 'electricity') {
@@ -131,6 +144,17 @@ const KioskLayout: React.FC = () => {
     return <ServiceModules onModuleSelect={handleModuleSelect} />;
   };
 
+  // Blind Mode
+  if (blindMode && landingDone && isAuthenticated) {
+    return (
+      <BlindMode
+        onModuleSelect={(m) => { setBlindMode(false); handleModuleSelect(m); }}
+        onExit={() => setBlindMode(false)}
+      />
+    );
+  }
+
+  // Senior Mode
   if (seniorMode && landingDone && isAuthenticated) {
     return (
       <div className="min-h-screen flex flex-col bg-background">
@@ -150,8 +174,11 @@ const KioskLayout: React.FC = () => {
           onSeniorMode={() => setSeniorMode(true)}
           onDashboard={() => handleModuleSelect('dashboard')}
           onNearbyKiosk={() => handleModuleSelect('nearbyKiosk')}
+          onBlindMode={() => setBlindMode(true)}
         />
       )}
+      {/* Live ticker bar */}
+      {landingDone && organization && isAuthenticated && <LiveKioskTicker compact />}
       {landingDone && organization && <VoiceCommander onNavigate={handleModuleSelect} />}
       {landingDone && organization && <ChatAssistant onNavigate={handleModuleSelect} />}
       {showSOS && <EmergencySOS onClose={() => setShowSOS(false)} />}

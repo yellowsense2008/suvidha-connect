@@ -6,7 +6,7 @@ import {
   Users, Scale, Trophy, Mic,
   CreditCard, MessageSquareWarning, FilePlus, Search, FileDown,
   Bell, Zap, Flame, Droplets, Trash2, Volume2, Calendar,
-  LayoutDashboard, MapPin, UserCheck
+  LayoutDashboard, MapPin, UserCheck, Brain, Clock, Activity
 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -131,6 +131,34 @@ const ServiceModules: React.FC<ServiceModulesProps> = ({ onModuleSelect }) => {
       icon: Mic,
       title: i18n.language === 'en' ? 'Voice Assistant' : 'वॉयस असिस्टेंट',
       description: i18n.language === 'en' ? 'Navigate by voice in Hindi & English' : 'हिंदी और अंग्रेजी में आवाज से नेविगेट करें',
+      color: 'accent'
+    },
+    {
+      id: 'predictiveMaintenance',
+      icon: Brain,
+      title: i18n.language === 'en' ? 'Predictive Maintenance' : 'पूर्वानुमान रखरखाव',
+      description: i18n.language === 'en' ? 'AI predicts failures before they happen' : 'AI विफलताओं की भविष्यवाणी करता है',
+      color: 'primary'
+    },
+    {
+      id: 'waterQuality',
+      icon: Droplets,
+      title: i18n.language === 'en' ? 'Water Quality Report' : 'जल गुणवत्ता रिपोर्ट',
+      description: i18n.language === 'en' ? 'Report water quality with TDS visual scale' : 'TDS स्केल से जल गुणवत्ता रिपोर्ट करें',
+      color: 'primary'
+    },
+    {
+      id: 'escalationTimer',
+      icon: Clock,
+      title: i18n.language === 'en' ? 'Escalation Tracker' : 'एस्केलेशन ट्रैकर',
+      description: i18n.language === 'en' ? 'Live SLA countdown & auto-escalation' : 'लाइव SLA काउंटडाउन और स्वचालित एस्केलेशन',
+      color: 'secondary'
+    },
+    {
+      id: 'civicHealth',
+      icon: Activity,
+      title: i18n.language === 'en' ? 'Civic Health Score' : 'नागरिक स्वास्थ्य स्कोर',
+      description: i18n.language === 'en' ? 'Sector-wise city performance dashboard' : 'क्षेत्रवार शहर प्रदर्शन डैशबोर्ड',
       color: 'accent'
     }
   ];

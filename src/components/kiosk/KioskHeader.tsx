@@ -15,9 +15,10 @@ interface KioskHeaderProps {
   onSeniorMode?: () => void;
   onDashboard?: () => void;
   onNearbyKiosk?: () => void;
+  onBlindMode?: () => void;
 }
 
-const KioskHeader: React.FC<KioskHeaderProps> = ({ onSOS, onSeniorMode, onDashboard, onNearbyKiosk }) => {
+const KioskHeader: React.FC<KioskHeaderProps> = ({ onSOS, onSeniorMode, onDashboard, onNearbyKiosk, onBlindMode }) => {
   const { isAuthenticated, citizen, language, setLanguage, logout, sessionTimeout } = useAuth();
   const { ttsEnabled, toggleTTS, backendOnline } = useKiosk();
   const { t, i18n } = useTranslation();
@@ -182,6 +183,16 @@ const KioskHeader: React.FC<KioskHeaderProps> = ({ onSOS, onSeniorMode, onDashbo
               >
                 <MapPin className="w-4 h-4" />
                 <span className="hidden lg:inline text-xs">Nearby</span>
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={onBlindMode}
+                className="text-white hover:bg-white/10 gap-1.5 border border-white/20 h-9"
+                title="Blind Mode"
+              >
+                <Eye className="w-4 h-4" />
+                <span className="hidden lg:inline text-xs">Blind</span>
               </Button>
               <Button
                 variant="ghost"

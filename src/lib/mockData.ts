@@ -9,6 +9,7 @@ export interface Citizen {
   consumerId: string;
   pin: string;
   points?: number;
+  email?: string;
 }
 
 export interface Bill {
