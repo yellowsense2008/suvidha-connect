@@ -1,13 +1,12 @@
 import 'dotenv/config';
 import { Router } from 'express';
-import { query } from '../db/pool.js';
+import { Citizen, ServiceRequest, CivicAlert, IntegrityLedger, AuditLog, Bill, Complaint } from '../models/index.js';
 
 const router = Router();
 const genId = (p) => `${p}-${Date.now()}-${Math.random().toString(36).slice(2,6).toUpperCase()}`;
 const genHash = (d) => { let h=0n; for(let i=0;i<d.length;i++) h=(h*31n+BigInt(d.charCodeAt(i)))&0xFFFFFFFFFFFFFFFFn; return h.toString(16).padStart(16,'0')+Date.now().toString(16); };
 
 // ─── Service Requests ─────────────────────────────────────────────────────────
-
 router.post('/requests', async (req, res) => {
   const { citizenId, type, applicantName, address, idProofType, requestSubtype, loadKW, documents = [] } = req.body;
   if (!citizenId || !type || !applicantName || !address)
@@ -17,138 +16,99 @@ router.post('/requests', async (req, res) => {
   const year = new Date().getFullYear();
   const rand = Math.floor(Math.random() * 90000 + 10000);
   const referenceNumber = `${prefix}-REQ-${year}-${rand}`;
-  const sla = new Date(Date.now() + 15 * 86400000).toISOString();
+  const sla = new Date(Date.now() + 15 * 86400000);
 
-  await query(
-    `INSERT INTO service_requests (id, citizen_id, type, request_subtype, applicant_name, address, id_proof_type, load_kw, documents, status, reference_number, sla, assigned_officer, remarks)
-     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,'submitted',$10,$11,$12,$13)`,
-    [genId('REQ'), citizenId, type, requestSubtype || type, applicantName, address, idProofType, loadKW || null, documents, referenceNumber, sla, 'Er. Dipak Kalita', 'Application received. Processing in 15 working days.']
-  );
+  await ServiceRequest.create({ id: genId('REQ'), citizenId, type, requestSubtype: requestSubtype || type, applicantName, address, idProofType, loadKw: loadKW || null, documents, status: 'submitted', referenceNumber, sla, assignedOfficer: 'Er. Dipak Kalita', remarks: 'Application received. Processing in 15 working days.' });
 
-  const lastHash = (await query('SELECT hash FROM integrity_ledger ORDER BY created_at DESC LIMIT 1')).rows[0]?.hash || '0'.repeat(16);
-  const hash = genHash(`${referenceNumber}${type}${new Date().toISOString()}${lastHash}`);
-  await query('INSERT INTO integrity_ledger (id, record_type, record_id, hash, previous_hash) VALUES ($1,$2,$3,$4,$5)',
-    [genId('IR'), 'request', referenceNumber, hash, lastHash]);
-
-  await query('INSERT INTO audit_logs (id, kiosk_id, action, user_id, details, ip_address) VALUES ($1,$2,$3,$4,$5,$6)',
-    [genId('LOG'), req.headers['x-kiosk-id'] || 'KIOSK-UNKNOWN', 'SERVICE_REQUEST', citizenId, `Type: ${type}, Ref: ${referenceNumber}`, req.ip]);
-
-  await query('UPDATE citizens SET points = points + 10 WHERE id = $1', [citizenId]);
+  const lastRecord = await IntegrityLedger.findOne().sort({ createdAt: -1 });
+  const lastHash = lastRecord?.hash || '0'.repeat(16);
+  await IntegrityLedger.create({ id: genId('IR'), recordType: 'request', recordId: referenceNumber, hash: genHash(`${referenceNumber}${type}${new Date().toISOString()}${lastHash}`), previousHash: lastHash });
+  await AuditLog.create({ id: genId('LOG'), kioskId: req.headers['x-kiosk-id'] || 'KIOSK-UNKNOWN', action: 'SERVICE_REQUEST', userId: citizenId, details: `Type: ${type}, Ref: ${referenceNumber}`, ipAddress: req.ip });
+  await Citizen.updateOne({ id: citizenId }, { $inc: { points: 10 } });
 
   res.status(201).json({ success: true, referenceNumber, sla, estimatedDays: 15 });
 });
 
 router.get('/requests/track/:id', async (req, res) => {
-  const result = await query(
-    'SELECT * FROM service_requests WHERE reference_number = $1 OR id = $1',
-    [req.params.id]
-  );
-  if (!result.rows.length)
-    return res.status(404).json({ error: { code: 'NOT_FOUND', message: 'Request not found.' } });
-  res.json({ request: result.rows[0] });
+  const request = await ServiceRequest.findOne({ $or: [{ referenceNumber: req.params.id }, { id: req.params.id }] });
+  if (!request) return res.status(404).json({ error: { code: 'NOT_FOUND', message: 'Request not found.' } });
+  res.json({ request });
 });
 
 // ─── Credentials ──────────────────────────────────────────────────────────────
-
 router.get('/credentials/:citizenId', async (req, res) => {
-  const result = await query('SELECT * FROM citizens WHERE id = $1', [req.params.citizenId]);
-  if (!result.rows.length)
-    return res.status(404).json({ error: { code: 'NOT_FOUND', message: 'Citizen not found.' } });
-  const c = result.rows[0];
-  res.json({ citizen: {
-    id: c.id, name: c.name, mobile: c.mobile, email: c.email,
-    address: c.address, consumerId: c.consumer_id, points: c.points,
-    aadhaar: `XXXX-XXXX-${(c.aadhaar || '0000').slice(-4)}`
-  }});
+  const citizen = await Citizen.findOne({ id: req.params.citizenId });
+  if (!citizen) return res.status(404).json({ error: { code: 'NOT_FOUND', message: 'Citizen not found.' } });
+  res.json({ citizen: { id: citizen.id, name: citizen.name, mobile: citizen.mobile, email: citizen.email, address: citizen.address, consumerId: citizen.consumerId, points: citizen.points, aadhaar: `XXXX-XXXX-${(citizen.aadhaar || '0000').slice(-4)}` } });
 });
 
 router.patch('/credentials/:citizenId', async (req, res) => {
   const { name, mobile, email, address } = req.body;
-  const { citizenId } = req.params;
+  const updates = {};
+  if (name) updates.name = name;
+  if (mobile) updates.mobile = mobile;
+  if (email) updates.email = email;
+  if (address) updates.address = address;
 
-  await query(
-    'UPDATE citizens SET name=COALESCE($1,name), mobile=COALESCE($2,mobile), email=COALESCE($3,email), address=COALESCE($4,address), updated_at=NOW() WHERE id=$5',
-    [name || null, mobile || null, email || null, address || null, citizenId]
-  );
+  await Citizen.updateOne({ id: req.params.citizenId }, { $set: updates });
 
-  const lastHash = (await query('SELECT hash FROM integrity_ledger ORDER BY created_at DESC LIMIT 1')).rows[0]?.hash || '0'.repeat(16);
+  const lastRecord = await IntegrityLedger.findOne().sort({ createdAt: -1 });
+  const lastHash = lastRecord?.hash || '0'.repeat(16);
   const receiptId = genId('UPD');
-  const hash = genHash(`${receiptId}${citizenId}${new Date().toISOString()}${lastHash}`);
-  await query('INSERT INTO integrity_ledger (id, record_type, record_id, hash, previous_hash) VALUES ($1,$2,$3,$4,$5)',
-    [genId('IR'), 'credential_update', receiptId, hash, lastHash]);
-
-  await query('INSERT INTO audit_logs (id, kiosk_id, action, user_id, details, ip_address) VALUES ($1,$2,$3,$4,$5,$6)',
-    [genId('LOG'), req.headers['x-kiosk-id'] || 'KIOSK-UNKNOWN', 'CREDENTIAL_UPDATE', citizenId,
-     `Updated: ${Object.keys(req.body).join(', ')}`, req.ip]);
+  await IntegrityLedger.create({ id: genId('IR'), recordType: 'credential_update', recordId: receiptId, hash: genHash(`${receiptId}${req.params.citizenId}${new Date().toISOString()}${lastHash}`), previousHash: lastHash });
+  await AuditLog.create({ id: genId('LOG'), kioskId: req.headers['x-kiosk-id'] || 'KIOSK-UNKNOWN', action: 'CREDENTIAL_UPDATE', userId: req.params.citizenId, details: `Updated: ${Object.keys(updates).join(', ')}`, ipAddress: req.ip });
 
   res.json({ success: true, receiptId });
 });
 
 // ─── Civic Alerts ─────────────────────────────────────────────────────────────
-
 router.get('/alerts', async (_req, res) => {
-  const result = await query('SELECT * FROM civic_alerts WHERE expires_at > NOW() ORDER BY created_at DESC');
-  res.json({ alerts: result.rows });
+  const alerts = await CivicAlert.find({ expiresAt: { $gt: new Date() } }).sort({ createdAt: -1 });
+  res.json({ alerts });
 });
 
 router.post('/alerts', async (req, res) => {
   const { title, titleHindi, titleAssamese, message, messageHindi, type, severity, zones, expiresAt } = req.body;
-  const id = genId('ALERT');
-  await query(
-    'INSERT INTO civic_alerts (id, type, title, title_hindi, title_assamese, message, message_hindi, severity, zones, expires_at) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)',
-    [id, type, title, titleHindi || title, titleAssamese || title, message, messageHindi || message, severity, zones || ['All Zones'], expiresAt]
-  );
-  res.status(201).json({ success: true, alertId: id });
+  const alert = await CivicAlert.create({ id: genId('ALERT'), type, title, titleHindi: titleHindi || title, titleAssamese: titleAssamese || title, message, messageHindi: messageHindi || message, severity, zones: zones || ['All Zones'], expiresAt });
+  res.status(201).json({ success: true, alertId: alert.id });
 });
 
 // ─── Integrity Ledger ─────────────────────────────────────────────────────────
-
 router.get('/ledger', async (_req, res) => {
-  const result = await query('SELECT * FROM integrity_ledger ORDER BY created_at DESC LIMIT 50');
-  res.json({ records: result.rows });
+  const records = await IntegrityLedger.find().sort({ createdAt: -1 }).limit(50);
+  res.json({ records });
 });
 
-// ─── Admin ────────────────────────────────────────────────────────────────────
-
+// ─── Admin Stats ──────────────────────────────────────────────────────────────
 router.get('/admin/stats', async (_req, res) => {
-  const [bills, complaints, requests, citizens, ledger] = await Promise.all([
-    query('SELECT COUNT(*) total, SUM(amount) revenue FROM bill_payments'),
-    query('SELECT COUNT(*) total, COUNT(*) FILTER (WHERE status=\'resolved\') resolved, COUNT(*) FILTER (WHERE status=\'pending\') pending FROM complaints'),
-    query('SELECT COUNT(*) total FROM service_requests'),
-    query('SELECT COUNT(*) total FROM citizens'),
-    query('SELECT COUNT(*) total FROM integrity_ledger'),
+  const [totalCitizens, totalComplaints, pendingComplaints, resolvedComplaints, totalRequests, totalLedger, billPayments] = await Promise.all([
+    Citizen.countDocuments(),
+    Complaint.countDocuments(),
+    Complaint.countDocuments({ status: 'pending' }),
+    Complaint.countDocuments({ status: 'resolved' }),
+    ServiceRequest.countDocuments(),
+    IntegrityLedger.countDocuments(),
+    Bill.aggregate([{ $unwind: '$previousPayments' }, { $group: { _id: null, total: { $sum: '$previousPayments.amount' }, count: { $sum: 1 } } }]),
   ]);
-  res.json({
-    totalTransactions: parseInt(bills.rows[0].total),
-    totalRevenue: parseFloat(bills.rows[0].revenue || 0),
-    complaintsReceived: parseInt(complaints.rows[0].total),
-    complaintsResolved: parseInt(complaints.rows[0].resolved),
-    pendingComplaints: parseInt(complaints.rows[0].pending),
-    newConnections: parseInt(requests.rows[0].total),
-    totalCitizens: parseInt(citizens.rows[0].total),
-    integrityRecords: parseInt(ledger.rows[0].total),
-  });
+  res.json({ totalCitizens, totalComplaints, pendingComplaints, resolvedComplaints, newConnections: totalRequests, integrityRecords: totalLedger, totalTransactions: billPayments[0]?.count || 0, totalRevenue: billPayments[0]?.total || 0 });
 });
 
 router.get('/admin/audit-logs', async (req, res) => {
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 20;
-  const offset = (page - 1) * limit;
-  const [logs, count] = await Promise.all([
-    query('SELECT * FROM audit_logs ORDER BY created_at DESC LIMIT $1 OFFSET $2', [limit, offset]),
-    query('SELECT COUNT(*) total FROM audit_logs'),
+  const [logs, total] = await Promise.all([
+    AuditLog.find().sort({ createdAt: -1 }).skip((page - 1) * limit).limit(limit),
+    AuditLog.countDocuments(),
   ]);
-  res.json({ logs: logs.rows, total: parseInt(count.rows[0].total) });
+  res.json({ logs, total });
 });
 
 // ─── Points ───────────────────────────────────────────────────────────────────
-
 router.post('/points/award', async (req, res) => {
   const { citizenId, points, reason } = req.body;
-  const result = await query('UPDATE citizens SET points = points + $1 WHERE id = $2 RETURNING points', [points, citizenId]);
-  if (!result.rows.length)
-    return res.status(404).json({ error: { code: 'NOT_FOUND', message: 'Citizen not found.' } });
-  res.json({ success: true, totalPoints: result.rows[0].points, reason });
+  const citizen = await Citizen.findOneAndUpdate({ id: citizenId }, { $inc: { points } }, { new: true });
+  if (!citizen) return res.status(404).json({ error: { code: 'NOT_FOUND', message: 'Citizen not found.' } });
+  res.json({ success: true, totalPoints: citizen.points, reason });
 });
 
 export default router;
