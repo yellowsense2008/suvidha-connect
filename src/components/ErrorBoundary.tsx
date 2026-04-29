@@ -18,8 +18,8 @@ class ErrorBoundary extends Component<Props, State> {
     return { hasError: true, error };
   }
 
-  public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.error('Error caught by boundary:', error, errorInfo);
+  public componentDidCatch(error: Error, _errorInfo: ErrorInfo) {
+    console.error('[SUVIDHA] Error caught by boundary:', error.message);
   }
 
   public render() {

@@ -68,7 +68,7 @@ const VoiceCommander: React.FC<VoiceCommanderProps> = ({ onNavigate }) => {
 
       recognitionInstance.onresult = (event: SpeechRecognitionEvent) => {
         const transcript = event.results[0][0].transcript.toLowerCase();
-        console.log('Voice Command:', transcript);
+        console.log('Voice Command received');
         processCommand(transcript);
         setIsListening(false);
       };

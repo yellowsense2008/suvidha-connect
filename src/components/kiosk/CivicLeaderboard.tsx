@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import confetti from 'canvas-confetti';
 import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -48,6 +49,15 @@ const CivicLeaderboard: React.FC<CivicLeaderboardProps> = ({ onBack }) => {
 
   const userEntry = LEADERBOARD.find(e => e.isCurrentUser);
   const userPoints = citizen?.points || 1890;
+
+  // Fire confetti when leaderboard opens if user is in top 5
+  useEffect(() => {
+    if (userEntry && userEntry.rank <= 5) {
+      setTimeout(() => {
+        confetti({ particleCount: 80, spread: 60, origin: { x: 0.5, y: 0.4 }, colors: ['#FF9933', '#FFFFFF', '#138808', '#3b82f6'] });
+      }, 800);
+    }
+  }, []);
 
   const rankColor = (rank: number) => {
     if (rank === 1) return 'bg-yellow-400 text-yellow-900';

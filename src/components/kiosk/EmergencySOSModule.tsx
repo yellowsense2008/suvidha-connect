@@ -93,7 +93,7 @@ const EmergencySOS: React.FC<EmergencySOSProps> = ({ onClose }) => {
       location: locationShared ? 'GPS shared' : 'Not shared'
     };
     
-    console.log('Emergency call logged:', logData);
+    console.log('[SUVIDHA] Emergency call initiated');
     
     // Simulate call initiation
     setTimeout(() => {
@@ -121,7 +121,7 @@ const EmergencySOS: React.FC<EmergencySOSProps> = ({ onClose }) => {
         toast.success(`${language === 'en' ? 'Location shared' : 'स्थान साझा किया गया'}: ${latitude.toFixed(5)}, ${longitude.toFixed(5)}`);
         
         // In real implementation, send to emergency services
-        console.log('Emergency location:', { latitude, longitude, citizenId: citizen?.id });
+        console.log('[SUVIDHA] Emergency location shared');
       },
       () => {
         toast.error(language === 'en' ? 'Could not detect location' : 'स्थान पता नहीं चला');

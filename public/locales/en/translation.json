@@ -1,52 +1,34 @@
 {
-  "welcome_title": "Welcome to SUVIDHA Services",
-  "welcome_subtitle": "Select a service to continue",
-  "services": {
-    "bills": {
-      "title": "Pay Utility Bill",
-      "description": "Electricity, Gas & Water"
-    },
-    "complaint": {
-      "title": "Register Complaint",
-      "description": "Report issues & grievances"
-    },
-    "newService": {
-      "title": "New Service Request",
-      "description": "Apply for new connections"
-    },
-    "track": {
-      "title": "Track Application",
-      "description": "Check status of your requests"
-    },
-    "documents": {
-      "title": "Download Documents",
-      "description": "Receipts & certificates"
-    },
-    "alerts": {
-      "title": "Civic Alerts",
-      "description": "Emergency & maintenance notices"
-    },
-    "waste": {
-        "title": "Waste Management",
-        "description": "Schedule pickup & pay fees"
-    }
-  },
   "header": {
-      "title": "SUVIDHA",
-      "subtitle": "Smart Urban Virtual Interactive Digital Helpdesk Assistant",
-      "login": "Login",
-      "admin": "Admin",
-      "logout": "Logout"
+    "title": "SUVIDHA",
+    "subtitle": "Smart Civic Services Kiosk",
+    "logout": "Logout",
+    "highContrast": "High Contrast",
+    "largeText": "Large Text"
   },
-  "waste": {
-    "schedule": "Schedule Pickup",
-    "pay_fee": "Pay Fees",
-    "schedule_success": "Pickup Scheduled Successfully!",
-    "payment_success": "Payment Successful!"
+  "welcome_title": "Welcome to SUVIDHA",
+  "welcome_subtitle": "Select a service to get started",
+  "services": {
+    "bills": { "title": "Pay Bills", "description": "Electricity, Gas & Water bills" },
+    "complaint": { "title": "Register Complaint", "description": "Report civic issues" },
+    "newService": { "title": "New Connection", "description": "Apply for new connections" },
+    "track": { "title": "Track Status", "description": "Check request status" },
+    "documents": { "title": "Documents", "description": "Download receipts & certificates" },
+    "waste": { "title": "Waste Management", "description": "Schedule garbage pickup" },
+    "appointment": { "title": "Book Appointment", "description": "Schedule office visits" },
+    "rewards": { "title": "SUVIDHA Rewards", "description": "Earn & redeem points" }
   },
-  "voice_error": "Voice command failed. Try again.",
-  "success": "Success!",
-  "back": "Back",
-  "home": "Home",
-  "Speak": "Speak"
+  "auth": {
+    "title": "Citizen Authentication",
+    "subtitle": "Secure login to access your services",
+    "mobile": "Mobile OTP",
+    "consumer": "Consumer ID",
+    "qr": "QR / Aadhaar",
+    "send_otp": "Send OTP",
+    "verify": "Verify & Login",
+    "login": "Login",
+    "demo": "Demo: Mobile 9876543210 / OTP 123456 or Consumer ID ELEC2024001 / PIN 1234"
+  },
+  "Speak": "Speak",
+  "voice_error": "Voice command failed. Try again."
 }

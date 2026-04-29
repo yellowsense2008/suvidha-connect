@@ -225,7 +225,7 @@ const ChatAssistant: React.FC<ChatAssistantProps> = ({ onNavigate }) => {
       };
 
       recognition.onerror = (event: any) => {
-        console.error('Speech recognition error', event.error);
+        console.error('Speech recognition error occurred');
         setIsListening(false);
         toast.error('Voice input failed. Please try typing.');
       };
