@@ -2,27 +2,11 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useKiosk } from '@/context/KioskContext';
-import { 
-  Users,
-  Scale,
-  Trophy,
-  Mic,
-  CreditCard, 
-  MessageSquareWarning, 
-  FilePlus, 
-  Search, 
-  FileDown,
-  Bell,
-  Zap,
-  Flame,
-  Droplets,
-  Trash2,
-  Volume2,
-  Calendar,
-  Trophy,
-  LayoutDashboard,
-  MapPin,
-  UserCheck
+import {
+  Users, Scale, Trophy, Mic,
+  CreditCard, MessageSquareWarning, FilePlus, Search, FileDown,
+  Bell, Zap, Flame, Droplets, Trash2, Volume2, Calendar,
+  LayoutDashboard, MapPin, UserCheck
 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
