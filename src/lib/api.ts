@@ -1,6 +1,6 @@
 // API client — connects to backend with graceful fallback to mock data
 
-const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
+const BASE_URL = import.meta.env.VITE_API_URL || (import.meta.env.PROD ? '/api' : 'http://localhost:3002/api');
 const KIOSK_ID = import.meta.env.VITE_KIOSK_ID || 'KIOSK-SEC5-001';
 
 const defaultHeaders = () => ({
@@ -111,7 +111,8 @@ export const pointsApi = {
 // ─── Health check ─────────────────────────────────────────────────────────────
 export const checkBackendHealth = async (): Promise<boolean> => {
   try {
-    const res = await fetch(`${BASE_URL.replace('/api', '')}/health`, { signal: AbortSignal.timeout(2000) });
+    const healthUrl = import.meta.env.PROD ? '/api/health' : 'http://localhost:3002/health';
+    const res = await fetch(healthUrl, { signal: AbortSignal.timeout(3000) });
     return res.ok;
   } catch {
     return false;

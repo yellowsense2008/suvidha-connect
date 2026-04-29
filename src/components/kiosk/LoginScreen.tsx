@@ -153,17 +153,17 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onSuccess }) => {
         
         <CardContent className="px-8 pb-8">
           <Tabs defaultValue="mobile" className="w-full">
-            <TabsList className="grid w-full grid-cols-3 mb-8 p-1 bg-slate-100/80 rounded-xl">
-              <TabsTrigger value="mobile" className="gap-2 text-sm py-2.5 data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm rounded-lg transition-all">
-                <Smartphone className="w-4 h-4" />
+            <TabsList className="grid w-full grid-cols-3 mb-6 h-11 bg-slate-100 rounded-xl p-1">
+              <TabsTrigger value="mobile" className="rounded-lg text-sm font-medium data-[state=active]:bg-white data-[state=active]:text-blue-700 data-[state=active]:shadow-sm">
+                <Smartphone className="w-4 h-4 mr-1.5" />
                 {text.mobileTab}
               </TabsTrigger>
-              <TabsTrigger value="consumer" className="gap-2 text-sm py-2.5 data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm rounded-lg transition-all">
-                <CreditCard className="w-4 h-4" />
+              <TabsTrigger value="consumer" className="rounded-lg text-sm font-medium data-[state=active]:bg-white data-[state=active]:text-blue-700 data-[state=active]:shadow-sm">
+                <CreditCard className="w-4 h-4 mr-1.5" />
                 {text.consumerTab}
               </TabsTrigger>
-              <TabsTrigger value="qr" className="gap-2 text-sm py-2.5 data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm rounded-lg transition-all">
-                <QrCode className="w-4 h-4" />
+              <TabsTrigger value="qr" className="rounded-lg text-sm font-medium data-[state=active]:bg-white data-[state=active]:text-blue-700 data-[state=active]:shadow-sm">
+                <QrCode className="w-4 h-4 mr-1.5" />
                 {text.qrTab}
               </TabsTrigger>
             </TabsList>
