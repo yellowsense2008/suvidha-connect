@@ -66,7 +66,7 @@ const WasteModule: React.FC<WasteModuleProps> = ({ onBack }) => {
 
   if (success) {
     return (
-      <div className="p-6 h-full flex flex-col items-center justify-center animate-in fade-in zoom-in duration-300">
+      <div className="p-6 overflow-y-auto pb-10 h-full flex flex-col items-center justify-center animate-in fade-in zoom-in duration-300">
         <div className="bg-green-50 p-6 rounded-full mb-6 border border-green-100">
           <CheckCircle className="w-16 h-16 text-green-600" />
         </div>
@@ -109,7 +109,7 @@ const WasteModule: React.FC<WasteModuleProps> = ({ onBack }) => {
   }
 
   return (
-    <div className="p-6 max-w-5xl mx-auto space-y-6">
+    <div className="p-6 overflow-y-auto pb-10 max-w-5xl mx-auto space-y-6">
       <div className="flex items-center gap-4 mb-6">
         <Button variant="ghost" size="icon" onClick={onBack} className="h-12 w-12 rounded-full hover:bg-blue-50 text-blue-600">
           <ArrowLeft className="w-6 h-6" />

@@ -85,7 +85,7 @@ const AppointmentModule: React.FC<AppointmentModuleProps> = ({ onBack }) => {
 
   if (isSubmitted) {
     return (
-      <div className="p-6 max-w-4xl mx-auto animate-in fade-in slide-in-from-bottom-4">
+      <div className="p-6 overflow-y-auto pb-10 max-w-4xl mx-auto animate-in fade-in slide-in-from-bottom-4">
         <Button variant="ghost" onClick={onBack} className="mb-4 gap-2">
           <ArrowLeft className="w-4 h-4" /> {language === 'en' ? 'Back' : 'वापस'}
         </Button>
@@ -128,7 +128,7 @@ const AppointmentModule: React.FC<AppointmentModuleProps> = ({ onBack }) => {
   }
 
   return (
-    <div className="p-6 max-w-6xl mx-auto animate-in fade-in">
+    <div className="p-6 overflow-y-auto pb-10 max-w-6xl mx-auto animate-in fade-in">
       <div className="flex items-center gap-4 mb-8">
         <Button variant="outline" size="icon" onClick={onBack} className="rounded-full">
           <ArrowLeft className="w-5 h-5" />

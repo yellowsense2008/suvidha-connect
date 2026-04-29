@@ -186,7 +186,7 @@ const ServiceModules: React.FC<ServiceModulesProps> = ({ onModuleSelect }) => {
   };
 
   return (
-    <div className="p-8">
+    <div className="p-8 overflow-y-auto pb-10">
       {/* Welcome Message */}
       <div className="text-center mb-8">
         <h2 className="text-3xl font-bold text-foreground mb-2">

@@ -323,7 +323,7 @@ const BillPaymentModule: React.FC<BillPaymentModuleProps> = ({ onBack }) => {
     const styles = selectedBillData ? getServiceStyles(selectedBillData.type) : getServiceStyles('default');
 
     return (
-      <div className="p-8 max-w-2xl mx-auto animate-in fade-in zoom-in duration-300">
+      <div className="p-8 overflow-y-auto pb-10 max-w-2xl mx-auto animate-in fade-in zoom-in duration-300">
         <Card className={`border ${styles.border} shadow-xl`}>
           <CardContent className="p-8 text-center">
             <div className={`w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 border ${styles.highlight} ${styles.border}`}>
@@ -411,7 +411,7 @@ const BillPaymentModule: React.FC<BillPaymentModuleProps> = ({ onBack }) => {
   }
 
   return (
-    <div className="p-8 space-y-8 animate-in fade-in duration-500">
+    <div className="p-8 overflow-y-auto pb-10 space-y-8 animate-in fade-in duration-500">
       {/* Header */}
       <div className="flex items-center gap-4">
         <Button variant="ghost" size="icon" onClick={onBack} className="h-12 w-12 rounded-full hover:bg-blue-50 text-blue-600">

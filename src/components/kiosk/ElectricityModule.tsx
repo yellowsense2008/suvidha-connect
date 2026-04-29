@@ -65,7 +65,7 @@ const ElectricityModule: React.FC<Props> = ({ onModuleSelect, onChangeOrg }) => 
   const t = labels[lang];
 
   return (
-    <div className="p-6 md:p-8">
+    <div className="p-6 md:p-8 overflow-y-auto pb-10">
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div className="flex items-center gap-4">

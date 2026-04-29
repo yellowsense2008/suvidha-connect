@@ -242,7 +242,7 @@ const TrackStatusModule: React.FC<TrackStatusModuleProps> = ({ onBack }) => {
   const currentIdx = result ? getStatusIndex(result.data.status, result.type) : -1;
 
   return (
-    <div className="p-6 md:p-8">
+    <div className="p-6 md:p-8 overflow-y-auto pb-10">
       {/* Header */}
       <div className="flex items-center gap-4 mb-8">
         <Button variant="ghost" size="icon" onClick={onBack} className="h-12 w-12 hover:bg-blue-50 text-blue-600">

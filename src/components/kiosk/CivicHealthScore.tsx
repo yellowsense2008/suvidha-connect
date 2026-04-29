@@ -37,7 +37,7 @@ const CivicHealthScore: React.FC<CivicHealthScoreProps> = ({ onBack }) => {
   const cityAvg = Math.round(SECTORS.reduce((s, sec) => s + sec.score, 0) / SECTORS.length);
 
   return (
-    <div className="p-6 max-w-5xl mx-auto">
+    <div className="p-6 overflow-y-auto pb-10 max-w-5xl mx-auto">
       <div className="flex items-center gap-4 mb-6">
         <Button variant="ghost" size="icon" onClick={onBack} className="h-12 w-12 rounded-full hover:bg-blue-50 text-blue-600">
           <ArrowLeft className="w-6 h-6" />

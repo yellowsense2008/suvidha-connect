@@ -110,7 +110,7 @@ const CredentialManagement: React.FC<Props> = ({ onBack }) => {
 
   if (done) {
     return (
-      <div className="p-8 max-w-2xl mx-auto animate-in fade-in zoom-in duration-300">
+      <div className="p-8 overflow-y-auto pb-10 max-w-2xl mx-auto animate-in fade-in zoom-in duration-300">
         <Card className="border border-green-100 shadow-xl">
           <CardContent className="p-8 text-center">
             <div className="w-20 h-20 rounded-full bg-green-50 flex items-center justify-center mx-auto mb-6 border border-green-100">
@@ -152,7 +152,7 @@ const CredentialManagement: React.FC<Props> = ({ onBack }) => {
 
       <div className="max-w-2xl mx-auto space-y-6">
         <Card className="border-slate-200 shadow-sm">
-          <CardContent className="p-8 space-y-5">
+          <CardContent className="p-8 overflow-y-auto pb-10 space-y-5">
             {/* Name */}
             <div className="space-y-2">
               <label className="text-sm font-semibold text-slate-700 flex items-center gap-2">

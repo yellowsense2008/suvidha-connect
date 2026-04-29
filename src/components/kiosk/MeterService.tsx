@@ -124,7 +124,7 @@ const MeterService: React.FC<Props> = ({ onBack }) => {
 
   if (ticketId) {
     return (
-      <div className="p-8 max-w-2xl mx-auto animate-in fade-in zoom-in duration-300">
+      <div className="p-8 overflow-y-auto pb-10 max-w-2xl mx-auto animate-in fade-in zoom-in duration-300">
         <Card className="border border-blue-100 shadow-xl">
           <CardContent className="p-8 text-center">
             <div className="w-20 h-20 rounded-full bg-blue-50 flex items-center justify-center mx-auto mb-6 border border-blue-100">
@@ -176,7 +176,7 @@ const MeterService: React.FC<Props> = ({ onBack }) => {
 
       <div className="max-w-3xl mx-auto">
         <Card className="border-slate-200 shadow-sm">
-          <CardContent className="p-8 space-y-6">
+          <CardContent className="p-8 overflow-y-auto pb-10 space-y-6">
             {/* Request Type */}
             <div className="space-y-3">
               <label className="text-sm font-semibold text-slate-700">{tx.typeLabel} *</label>

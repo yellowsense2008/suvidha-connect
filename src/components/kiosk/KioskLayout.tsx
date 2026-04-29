@@ -182,7 +182,7 @@ const KioskLayout: React.FC = () => {
       {landingDone && organization && <VoiceCommander onNavigate={handleModuleSelect} />}
       {landingDone && organization && <ChatAssistant onNavigate={handleModuleSelect} />}
       {showSOS && <EmergencySOS onClose={() => setShowSOS(false)} />}
-      <main className="flex-1 kiosk-scroll">
+      <main className="flex-1 overflow-y-auto kiosk-scroll" style={{ height: 0 }}>
         {renderModule()}
       </main>
       {landingDone && organization && (

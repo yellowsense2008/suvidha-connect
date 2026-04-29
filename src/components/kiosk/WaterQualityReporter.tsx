@@ -56,7 +56,7 @@ const WaterQualityReporter: React.FC<WaterQualityReporterProps> = ({ onBack }) =
   };
 
   if (submitted) return (
-    <div className="p-8 max-w-lg mx-auto animate-in fade-in zoom-in duration-300">
+    <div className="p-8 overflow-y-auto pb-10 max-w-lg mx-auto animate-in fade-in zoom-in duration-300">
       <Card className="border-green-200 shadow-xl">
         <CardContent className="p-8 text-center">
           <CheckCircle className="w-16 h-16 text-green-600 mx-auto mb-4" />
@@ -70,7 +70,7 @@ const WaterQualityReporter: React.FC<WaterQualityReporterProps> = ({ onBack }) =
   );
 
   return (
-    <div className="p-6 max-w-3xl mx-auto">
+    <div className="p-6 overflow-y-auto pb-10 max-w-3xl mx-auto">
       <div className="flex items-center gap-4 mb-6">
         <Button variant="ghost" size="icon" onClick={onBack} className="h-12 w-12 rounded-full hover:bg-blue-50 text-blue-600">
           <ArrowLeft className="w-6 h-6" />

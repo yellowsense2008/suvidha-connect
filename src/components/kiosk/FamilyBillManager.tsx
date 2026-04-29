@@ -92,7 +92,7 @@ const FamilyBillManager: React.FC<FamilyBillManagerProps> = ({ onBack }) => {
   };
 
   if (paid) return (
-    <div className="p-8 max-w-2xl mx-auto animate-in fade-in zoom-in duration-300">
+    <div className="p-8 overflow-y-auto pb-10 max-w-2xl mx-auto animate-in fade-in zoom-in duration-300">
       <Card className="border-green-200 shadow-xl">
         <CardContent className="p-8 text-center">
           <div className="w-20 h-20 rounded-full bg-green-50 flex items-center justify-center mx-auto mb-6 border border-green-200">
@@ -116,7 +116,7 @@ const FamilyBillManager: React.FC<FamilyBillManagerProps> = ({ onBack }) => {
   );
 
   return (
-    <div className="p-6 max-w-4xl mx-auto">
+    <div className="p-6 overflow-y-auto pb-10 max-w-4xl mx-auto">
       <div className="flex items-center gap-4 mb-6">
         <Button variant="ghost" size="icon" onClick={onBack} className="h-12 w-12 rounded-full hover:bg-blue-50 text-blue-600">
           <ArrowLeft className="w-6 h-6" />

@@ -222,7 +222,7 @@ const NewServiceModule: React.FC<NewServiceModuleProps> = ({ onBack }) => {
   // ─── Success Screen ──────────────────────────────────────────────────────────
   if (referenceNumber) {
     return (
-      <div className="p-8 max-w-2xl mx-auto animate-in fade-in zoom-in duration-300">
+      <div className="p-8 overflow-y-auto pb-10 max-w-2xl mx-auto animate-in fade-in zoom-in duration-300">
         <Card className="border border-blue-100 shadow-xl">
           <CardContent className="p-8 text-center">
             <div className="w-20 h-20 rounded-full bg-blue-50 flex items-center justify-center mx-auto mb-6 border border-blue-100">
@@ -275,7 +275,7 @@ const NewServiceModule: React.FC<NewServiceModuleProps> = ({ onBack }) => {
   const subtypes = SUBTYPES[selectedOrg] || [];
 
   return (
-    <div className="p-6 md:p-8">
+    <div className="p-6 md:p-8 overflow-y-auto pb-10">
       {/* Header */}
       <div className="flex items-center gap-4 mb-8">
         <Button variant="ghost" size="icon" onClick={onBack} className="h-12 w-12 hover:bg-blue-50 hover:text-blue-600">
@@ -289,7 +289,7 @@ const NewServiceModule: React.FC<NewServiceModuleProps> = ({ onBack }) => {
 
       <div className="max-w-4xl mx-auto">
         <Card className="border-slate-200 shadow-lg">
-          <CardContent className="p-8 space-y-8">
+          <CardContent className="p-8 overflow-y-auto pb-10 space-y-8">
 
             {/* Org selector (only if not pre-selected) */}
             {!organization && (

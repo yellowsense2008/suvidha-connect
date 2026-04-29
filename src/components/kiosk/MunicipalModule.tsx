@@ -68,7 +68,7 @@ const MunicipalModule: React.FC<Props> = ({ onModuleSelect, onChangeOrg }) => {
   const t = labels[lang];
 
   return (
-    <div className="p-6 md:p-8">
+    <div className="p-6 md:p-8 overflow-y-auto pb-10">
       <div className="flex items-center justify-between mb-8">
         <div className="flex items-center gap-4">
           <div className="w-14 h-14 rounded-2xl bg-blue-50 border border-blue-200 flex items-center justify-center">
