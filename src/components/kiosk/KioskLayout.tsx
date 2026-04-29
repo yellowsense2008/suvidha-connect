@@ -167,7 +167,7 @@ const KioskLayout: React.FC = () => {
   }
 
   return (
-    <div className={`min-h-screen flex flex-col kiosk-portrait kiosk-touch kiosk-no-select ${!landingDone || !organization ? 'bg-[hsl(220,90%,18%)]' : 'bg-background'}`}>
+    <div className={`h-screen flex flex-col kiosk-portrait kiosk-touch kiosk-no-select ${!landingDone || !organization ? 'bg-[hsl(220,90%,18%)]' : 'bg-background'}`}>
       {landingDone && organization && (
         <KioskHeader
           onSOS={() => setShowSOS(true)}
@@ -177,12 +177,11 @@ const KioskLayout: React.FC = () => {
           onBlindMode={() => setBlindMode(true)}
         />
       )}
-      {/* Live ticker bar */}
       {landingDone && organization && isAuthenticated && <LiveKioskTicker compact />}
       {landingDone && organization && <VoiceCommander onNavigate={handleModuleSelect} />}
       {landingDone && organization && <ChatAssistant onNavigate={handleModuleSelect} />}
       {showSOS && <EmergencySOS onClose={() => setShowSOS(false)} />}
-      <main className="flex-1 overflow-y-auto kiosk-scroll" style={{ height: 0 }}>
+      <main className="flex-1 min-h-0 overflow-y-auto">
         {renderModule()}
       </main>
       {landingDone && organization && (

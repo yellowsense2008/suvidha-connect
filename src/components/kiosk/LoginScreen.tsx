@@ -124,7 +124,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onSuccess }) => {
   };
 
   return (
-    <div className="min-h-full flex items-start justify-center p-8 bg-muted/30 relative overflow-y-auto">
+    <div className="min-h-full flex items-start justify-center p-8 bg-muted/30">
       {/* Background Decor */}
       <div className="absolute inset-0 z-0 opacity-5">
         <div className="absolute top-0 left-0 w-96 h-96 bg-blue-600 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
