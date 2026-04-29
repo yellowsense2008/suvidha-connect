@@ -11,7 +11,12 @@ const app = express();
 const PORT = process.env.PORT || 3002;
 
 app.use(cors({
-  origin: ['http://localhost:8080', 'http://localhost:5173', 'https://suvidha-connect.vercel.app'],
+  origin: [
+    'http://localhost:8080',
+    'http://localhost:5173',
+    'https://suvidha-connect.vercel.app',
+    'https://*.vercel.app',
+  ],
   methods: ['GET', 'POST', 'PATCH', 'DELETE'],
   allowedHeaders: ['Content-Type', 'X-Kiosk-ID']
 }));
