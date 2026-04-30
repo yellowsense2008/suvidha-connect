@@ -85,7 +85,7 @@ const GasModule: React.FC<Props> = ({ onModuleSelect, onChangeOrg }) => {
         </Button>
       </div>
 
-      <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 max-w-6xl mx-auto">
+      <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 max-w-6xl mx-auto mb-5">
         {t.modules.map((mod) => (
           <Card
             key={mod.id}
@@ -109,6 +109,31 @@ const GasModule: React.FC<Props> = ({ onModuleSelect, onChangeOrg }) => {
             </CardContent>
           </Card>
         ))}
+      </div>
+
+      {/* 🏆 Suvidha Rewards Banner */}
+      <div
+        onClick={() => onModuleSelect('rewards')}
+        className="max-w-6xl mx-auto cursor-pointer p-5 rounded-2xl bg-gradient-to-r from-yellow-400 via-orange-400 to-red-400 text-white flex items-center gap-4 shadow-xl hover:scale-[1.01] transition-all"
+      >
+        <div className="w-14 h-14 rounded-2xl bg-white/20 flex items-center justify-center shrink-0">
+          <span className="text-3xl">🏆</span>
+        </div>
+        <div className="flex-1">
+          <p className="font-bold text-xl">
+            {lang === 'en' ? 'Suvidha Rewards' : lang === 'hi' ? 'सुविधा रिवॉर्ड्स' : 'সুবিধা ৰিৱাৰ্ড'}
+          </p>
+          <p className="text-white/80 text-sm">
+            {lang === 'en' ? 'Earn points for every action • Unlock badges • Redeem rewards'
+            : lang === 'hi' ? 'हर कार्य पर अंक अर्जित करें • बैज अनलॉक करें • रिवॉर्ड्स भुनाएं'
+            : 'প্ৰতিটো কাৰ্যৰ বাবে পইণ্ট অৰ্জন কৰক • বেজ আনলক কৰক • ৰিৱাৰ্ড ৰিডিম কৰক'}
+          </p>
+        </div>
+        <div className="text-right shrink-0">
+          <p className="text-2xl font-black">{citizen?.points || 0}</p>
+          <p className="text-white/70 text-xs">pts</p>
+        </div>
+        <span className="text-white/80 text-2xl ml-2">→</span>
       </div>
     </div>
   );

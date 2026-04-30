@@ -124,6 +124,7 @@ const KioskLayout: React.FC = () => {
         case 'documents': return <DocumentsModule onBack={handleBack} />;
         case 'meter': return <MeterService onBack={handleBack} />;
         case 'credentials': return <CredentialManagement onBack={handleBack} />;
+        case 'rewards': return <RewardsModule onBack={handleBack} />;
         default: return <GasModule onModuleSelect={handleModuleSelect} onChangeOrg={() => setLandingDone(false)} />;
       }
     }
@@ -137,6 +138,7 @@ const KioskLayout: React.FC = () => {
         case 'documents': return <DocumentsModule onBack={handleBack} />;
         case 'waste': return <WasteModule onBack={handleBack} />;
         case 'credentials': return <CredentialManagement onBack={handleBack} />;
+        case 'rewards': return <RewardsModule onBack={handleBack} />;
         default: return <MunicipalModule onModuleSelect={handleModuleSelect} onChangeOrg={() => setLandingDone(false)} />;
       }
     }
