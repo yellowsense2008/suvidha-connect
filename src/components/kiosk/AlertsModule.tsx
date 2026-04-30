@@ -82,7 +82,7 @@ const AlertsModule: React.FC<AlertsModuleProps> = ({ onBack }) => {
   );
 
   return (
-    <div className="p-8">
+    <div className="p-6 md:p-8 pb-20">
       {/* Header */}
       <div className="flex items-center gap-4 mb-8">
         <Button variant="ghost" size="icon" onClick={onBack} className="h-12 w-12">
