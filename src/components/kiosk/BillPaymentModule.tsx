@@ -13,6 +13,8 @@ import { toast } from 'sonner';
 import { QRCodeSVG } from 'qrcode.react';
 import jsPDF from 'jspdf';
 import ThermalReceipt, { type ThermalReceiptData } from './ThermalReceipt';
+import BillTTSReader from './BillTTSReader';
+import ReceiptDelivery from './ReceiptDelivery';
 
 interface BillPaymentModuleProps {
   onBack: () => void;
@@ -30,6 +32,7 @@ const BillPaymentModule: React.FC<BillPaymentModuleProps> = ({ onBack }) => {
     timestamp: string;
   } | null>(null);
   const [showThermal, setShowThermal] = useState(false);
+  const [showReceiptDelivery, setShowReceiptDelivery] = useState(false);
 
   const t = {
     en: {
@@ -396,6 +399,19 @@ const BillPaymentModule: React.FC<BillPaymentModuleProps> = ({ onBack }) => {
               />
             )}
 
+            {/* 📱 WhatsApp / SMS / Email Receipt Delivery */}
+            <button
+              onClick={() => setShowReceiptDelivery(true)}
+              className="w-full mb-4 p-4 rounded-xl border-2 border-dashed border-green-400 bg-green-50 hover:bg-green-100 transition-all flex items-center gap-3"
+            >
+              <span className="text-2xl">📱</span>
+              <div className="text-left">
+                <p className="font-bold text-green-800">Send Receipt via WhatsApp / SMS / Email</p>
+                <p className="text-green-600 text-sm">Receive your payment confirmation instantly</p>
+              </div>
+              <span className="ml-auto text-green-500 text-xl">→</span>
+            </button>
+
             <div className="flex gap-4">
               <Button className="flex-1 h-14 bg-white text-slate-700 border border-slate-300 hover:bg-slate-50" variant="secondary" onClick={resetPayment}>
                 {text.newPayment}
@@ -406,6 +422,17 @@ const BillPaymentModule: React.FC<BillPaymentModuleProps> = ({ onBack }) => {
             </div>
           </CardContent>
         </Card>
+
+        {/* Receipt Delivery Overlay */}
+        {showReceiptDelivery && paymentComplete && (
+          <ReceiptDelivery
+            receiptId={paymentComplete.transactionId}
+            amount={paymentComplete.amount}
+            type="payment"
+            refId={paymentComplete.transactionId}
+            onClose={() => setShowReceiptDelivery(false)}
+          />
+        )}
       </div>
     );
   }
@@ -590,6 +617,18 @@ const BillPaymentModule: React.FC<BillPaymentModuleProps> = ({ onBack }) => {
                           </div>
                         </CardContent>
                       </Card>
+
+                      {/* 🔊 Bill TTS Karaoke Reader */}
+                      {selectedBillData && citizen && (
+                        <BillTTSReader
+                          billType={selectedBillData.type}
+                          amount={selectedBillData.amount}
+                          dueDate={selectedBillData.dueDate}
+                          units={selectedBillData.units || 0}
+                          consumerName={citizen.name}
+                          consumerId={selectedBillData.consumerId}
+                        />
+                      )}
 
                       {/* Payment Method */}
                       <Card className="border-slate-200 shadow-md">
