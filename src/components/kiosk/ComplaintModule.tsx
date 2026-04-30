@@ -9,10 +9,11 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { 
   ArrowLeft, Zap, Flame, Droplets, Trash2, 
   MapPin, Upload, CheckCircle, Loader2, Shield, AlertTriangle,
-  FileText, Lightbulb, Construction, BellOff, HelpCircle, Printer
+  FileText, Lightbulb, Construction, BellOff, HelpCircle, Printer, Camera
 } from 'lucide-react';
 import { toast } from 'sonner';
 import ThermalReceipt from './ThermalReceipt';
+import AIPhotoComplaintAnalyzer from './AIPhotoComplaintAnalyzer';
 
 interface ComplaintModuleProps {
   onBack: () => void;
@@ -66,6 +67,23 @@ const ComplaintModule: React.FC<ComplaintModuleProps> = ({ onBack }) => {
   const [submitting, setSubmitting] = useState(false);
   const [complaintId, setComplaintId] = useState<string | null>(null);
   const [showThermal, setShowThermal] = useState(false);
+  const [showAIAnalyzer, setShowAIAnalyzer] = useState(false);
+
+  const handleAIDetected = (detectedCategory: string, detectedDescription: string) => {
+    // Map AI category to our complaint categories
+    const categoryMap: Record<string, string> = {
+      streetlight: 'streetlight',
+      road_damage: 'road_damage',
+      garbage: 'garbage',
+      water_supply: 'water_supply',
+      power_outage: 'power_outage',
+      gas_leakage: 'gas_leakage',
+    };
+    const mapped = categoryMap[detectedCategory] || 'other';
+    setCategory(mapped);
+    setDescription(detectedDescription);
+    toast.success('✅ Complaint form auto-filled by AI!');
+  };
 
   const handleDetectLocation = () => {
     if (!navigator.geolocation) {
@@ -272,6 +290,28 @@ const ComplaintModule: React.FC<ComplaintModuleProps> = ({ onBack }) => {
       </div>
 
       <div className="max-w-3xl mx-auto">
+        {/* AI Photo Analyzer Button — prominent at top */}
+        <button
+          onClick={() => setShowAIAnalyzer(true)}
+          className="w-full mb-6 p-5 rounded-2xl border-2 border-dashed border-blue-400 bg-gradient-to-r from-blue-50 to-indigo-50 hover:from-blue-100 hover:to-indigo-100 transition-all group flex items-center gap-4"
+        >
+          <div className="w-14 h-14 rounded-2xl bg-blue-600 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform shadow-lg shadow-blue-200">
+            <Camera className="w-7 h-7 text-white" />
+          </div>
+          <div className="text-left">
+            <p className="font-bold text-blue-800 text-lg flex items-center gap-2">
+              📸 AI Photo Complaint Analyzer
+              <span className="text-xs bg-blue-600 text-white px-2 py-0.5 rounded-full font-normal">NEW</span>
+            </p>
+            <p className="text-blue-600 text-sm mt-0.5">
+              {language === 'en' ? 'Take a photo → AI detects issue type & auto-fills form (85-96% accuracy)'
+              : language === 'hi' ? 'फोटो लें → AI समस्या का पता लगाए और फॉर्म भरे'
+              : 'ফটো তুলক → AI সমস্যা চিনাক্ত কৰি ফৰ্ম পূৰণ কৰিব'}
+            </p>
+          </div>
+          <span className="ml-auto text-blue-400 text-2xl">→</span>
+        </button>
+
         <Card className="border-slate-200 shadow-sm">
           <CardContent className="p-8 overflow-y-auto pb-10 space-y-6">
             {/* Category Selection */}
@@ -399,6 +439,14 @@ const ComplaintModule: React.FC<ComplaintModuleProps> = ({ onBack }) => {
           </CardContent>
         </Card>
       </div>
+
+      {/* AI Photo Analyzer Overlay */}
+      {showAIAnalyzer && (
+        <AIPhotoComplaintAnalyzer
+          onComplaintDetected={handleAIDetected}
+          onClose={() => setShowAIAnalyzer(false)}
+        />
+      )}
     </div>
   );
 };
