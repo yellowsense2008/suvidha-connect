@@ -170,6 +170,7 @@ const KioskLayout: React.FC = () => {
     <div className={`h-screen flex flex-col kiosk-portrait kiosk-touch kiosk-no-select ${!landingDone || !organization ? 'bg-[hsl(220,90%,18%)]' : 'bg-background'}`}>
       {landingDone && organization && (
         <KioskHeader
+          onHome={() => setCurrentModule('home')}
           onSOS={() => setShowSOS(true)}
           onSeniorMode={() => setSeniorMode(true)}
           onDashboard={() => handleModuleSelect('dashboard')}

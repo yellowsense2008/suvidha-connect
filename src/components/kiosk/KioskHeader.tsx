@@ -23,10 +23,11 @@ interface KioskHeaderProps {
   onDashboard?: () => void;
   onNearbyKiosk?: () => void;
   onBlindMode?: () => void;
+  onHome?: () => void;
 }
 
 const KioskHeader: React.FC<KioskHeaderProps> = ({
-  onSOS, onSeniorMode, onDashboard, onNearbyKiosk, onBlindMode
+  onSOS, onSeniorMode, onDashboard, onNearbyKiosk, onBlindMode, onHome
 }) => {
   const { isAuthenticated, citizen, language, setLanguage, logout, sessionTimeout } = useAuth();
   const { ttsEnabled, toggleTTS, backendOnline } = useKiosk();
@@ -61,8 +62,12 @@ const KioskHeader: React.FC<KioskHeaderProps> = ({
       {/* ── ROW 1: Branding + Core Actions ── */}
       <div className="flex items-center justify-between px-5 py-3 bg-[hsl(220,90%,28%)] text-white">
 
-        {/* Left: Logo */}
-        <div className="flex items-center gap-3">
+        {/* Left: Logo — click to go home */}
+        <button
+          onClick={onHome}
+          className="flex items-center gap-3 hover:opacity-80 transition-opacity cursor-pointer"
+          title="Go to Home"
+        >
           <div className="w-10 h-10 rounded-full bg-white/15 border border-white/25 flex items-center justify-center shrink-0">
             <Shield className="w-5 h-5 text-white" />
           </div>
@@ -72,11 +77,11 @@ const KioskHeader: React.FC<KioskHeaderProps> = ({
               {language === 'en' ? 'Smart Civic Services' : language === 'hi' ? 'स्मार्ट नागरिक सेवा' : 'স্মাৰ্ট নাগৰিক সেৱা'}
             </p>
           </div>
-          {/* Backend status dot */}
-          <div className="hidden lg:flex items-center gap-1 ml-2 pl-3 border-l border-white/20">
-            <div className={`w-1.5 h-1.5 rounded-full ${backendOnline ? 'bg-green-400 animate-pulse' : 'bg-yellow-400'}`} />
-            <span className="text-[10px] text-blue-300">{backendOnline ? 'Live' : 'Offline'}</span>
-          </div>
+        </button>
+        {/* Backend status dot */}
+        <div className="hidden lg:flex items-center gap-1 ml-2 pl-3 border-l border-white/20">
+          <div className={`w-1.5 h-1.5 rounded-full ${backendOnline ? 'bg-green-400 animate-pulse' : 'bg-yellow-400'}`} />
+          <span className="text-[10px] text-blue-300">{backendOnline ? 'Live' : 'Offline'}</span>
         </div>
 
         {/* Center: Date + Timer */}
